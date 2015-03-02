@@ -8,6 +8,7 @@ package gosrc
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -33,10 +34,31 @@ func init() {
 }
 
 var (
+	gitHubHeader        = http.Header{}
 	gitHubRawHeader     = http.Header{"Accept": {"application/vnd.github-blob.raw"}}
 	gitHubPreviewHeader = http.Header{"Accept": {"application/vnd.github.preview"}}
 	ownerRepoPat        = regexp.MustCompile(`^https://api.github.com/repos/([^/]+)/([^/]+)/`)
 )
+
+type AuthHeader struct{}
+
+func (AuthHeader) Set(token string) error {
+	if token == "" {
+		return errors.New("empty token")
+	}
+	value := []string{"token " + token}
+	gitHubHeader["Authorization"] = value
+	gitHubRawHeader["Authorization"] = value
+	gitHubPreviewHeader["Authorization"] = value
+	return nil
+}
+
+func (AuthHeader) String() string {
+	return "*****"
+}
+
+// GitHubToken sets value for the Authorization header of API requests.
+var GitHubToken AuthHeader
 
 func gitHubError(resp *http.Response) error {
 	var e struct {
@@ -48,9 +70,16 @@ func gitHubError(resp *http.Response) error {
 	return &RemoteError{resp.Request.URL.Host, fmt.Errorf("%d: (%s)", resp.StatusCode, resp.Request.URL.String())}
 }
 
-func getGitHubDir(client *http.Client, match map[string]string, savedEtag string) (*Directory, error) {
+func gitHubClient(client *http.Client, header http.Header) *httpClient {
+	c := &httpClient{client: client, errFn: gitHubError, header: header}
+	if c.header == nil {
+		c.header = gitHubHeader
+	}
+	return c
+}
 
-	c := &httpClient{client: client, errFn: gitHubError}
+func getGitHubDir(client *http.Client, match map[string]string, savedEtag string) (*Directory, error) {
+	c := gitHubClient(client, nil)
 
 	type refJSON struct {
 		Object struct {
@@ -180,7 +209,7 @@ func getGitHubDir(client *http.Client, match map[string]string, savedEtag string
 }
 
 func getGitHubPresentation(client *http.Client, match map[string]string) (*Presentation, error) {
-	c := &httpClient{client: client, header: gitHubRawHeader}
+	c := gitHubClient(client, gitHubRawHeader)
 
 	p, err := c.getBytes(expand("https://api.github.com/repos/{owner}/{repo}/contents{dir}/{file}", match))
 	if err != nil {
@@ -234,7 +263,7 @@ func getGitHubPresentation(client *http.Client, match map[string]string) (*Prese
 // GetGitHubUpdates returns the full names ("owner/repo") of recently pushed GitHub repositories.
 // by pushedAfter.
 func GetGitHubUpdates(client *http.Client, pushedAfter string) (maxPushedAt string, names []string, err error) {
-	c := httpClient{client: client, header: gitHubPreviewHeader}
+	c := gitHubClient(client, gitHubPreviewHeader)
 
 	if pushedAfter == "" {
 		pushedAfter = time.Now().Add(-24 * time.Hour).UTC().Format("2006-01-02T15:04:05Z")
@@ -262,7 +291,7 @@ func GetGitHubUpdates(client *http.Client, pushedAfter string) (maxPushedAt stri
 }
 
 func getGitHubProject(client *http.Client, match map[string]string) (*Project, error) {
-	c := &httpClient{client: client, errFn: gitHubError}
+	c := gitHubClient(client, nil)
 
 	var repo struct {
 		Description string
@@ -278,7 +307,7 @@ func getGitHubProject(client *http.Client, match map[string]string) (*Project, e
 }
 
 func getGistDir(client *http.Client, match map[string]string, savedEtag string) (*Directory, error) {
-	c := &httpClient{client: client, errFn: gitHubError}
+	c := gitHubClient(client, nil)
 
 	var gist struct {
 		Files map[string]struct {
