@@ -555,6 +555,30 @@ func newPackage(dir *gosrc.Directory) (*Package, error) {
 		}
 	}
 
+	// Find all test files.
+
+	goos, goarch := ctxt.GOOS, ctxt.GOARCH
+	tests := make(map[string]struct{}, len(bpkg.TestGoFiles)+len(bpkg.XTestGoFiles))
+
+	for _, env := range goEnvs {
+		ctxt.GOOS = env.GOOS
+		ctxt.GOARCH = env.GOARCH
+		pkg := bpkg
+		if env.GOOS != goos || env.GOARCH != goarch {
+			if pkg, err = dir.Import(&ctxt, build.ImportComment); err != nil {
+				continue
+			}
+		}
+		for _, name := range pkg.TestGoFiles {
+			tests[name] = struct{}{}
+		}
+		for _, name := range pkg.XTestGoFiles {
+			tests[name] = struct{}{}
+		}
+	}
+
+	ctxt.GOOS, ctxt.GOARCH = goos, goarch
+
 	// Parse the Go files
 
 	files := make(map[string]*ast.File)
@@ -578,7 +602,10 @@ func newPackage(dir *gosrc.Directory) (*Package, error) {
 
 	// Find examples in the test files.
 
-	names = append(bpkg.TestGoFiles, bpkg.XTestGoFiles...)
+	names = names[:0]
+	for name := range tests {
+		names = append(names, name)
+	}
 	sort.Strings(names)
 	pkg.TestFiles = make([]*File, len(names))
 	for i, name := range names {
