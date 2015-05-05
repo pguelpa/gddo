@@ -2,6 +2,8 @@ FROM google/golang:1.4
 
 EXPOSE 8080
 
+RUN apt-get install -y --no-install-recommends graphviz
+
 # Manually fetch and install gddo-server dependencies (faster than "go get").
 ADD https://github.com/garyburd/redigo/archive/779af66db5668074a96f522d9025cb0a5ef50d89.tar.gz /x/redigo.tar.gz
 ADD https://snappy-go.googlecode.com/archive/12e4b4183793ac4b061921e7980845e750679fd0.tar.gz /x/snappy-go.tar.gz
