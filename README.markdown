@@ -5,11 +5,16 @@ This project is the source for http://godoc.org/
 The code in this project is designed to be used by godoc.org. Send mail to
 golang-dev@googlegroups.com if you want to discuss other uses of the code.
 
+Development
+-----------
+
+To develop and run this project locally simply run `docker-compose up service`. This will build the Dockerfile and link it to a redis container.
+
 Feedback
 --------
 
 Send ideas and questions to golang-dev@googlegroups.com. Request features and report bugs
-using the [GitHub Issue Tracker](https://github.com/golang/gddo/issues/new). 
+using the [GitHub Issue Tracker](https://github.com/golang/gddo/issues/new).
 
 
 Contributions

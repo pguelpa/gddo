@@ -1,0 +1,12 @@
+service:
+  build: .
+  environment:
+    REDIS_URL: redis://data:6379
+    GITHUB_TOKEN:
+  ports:
+    - "8080"
+  links:
+    - data
+
+data:
+  image: redis:2.8

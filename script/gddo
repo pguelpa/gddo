@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gddo-server -db-server ${REDIS_URL} -github_token ${GITHUB_TOKEN}
