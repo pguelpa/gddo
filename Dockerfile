@@ -6,12 +6,12 @@ RUN apt-get install -y --no-install-recommends graphviz
 
 # Manually fetch and install gddo-server dependencies (faster than "go get").
 ADD https://github.com/garyburd/redigo/archive/779af66db5668074a96f522d9025cb0a5ef50d89.tar.gz /x/redigo.tar.gz
-ADD https://snappy-go.googlecode.com/archive/12e4b4183793ac4b061921e7980845e750679fd0.tar.gz /x/snappy-go.tar.gz
-RUN tar xzvf /x/redigo.tar.gz -C /x && tar xzvf /x/snappy-go.tar.gz -C /x && \
+ADD https://github.com/golang/snappy/archive/a911026e1ffa84898778ccb0363930485e0aa880.tar.gz /x/snappy.tar.gz
+RUN tar xzvf /x/redigo.tar.gz -C /x && tar xzvf /x/snappy.tar.gz -C /x && \
 	mkdir -p ${GOPATH}/src/github.com/garyburd && \
-	mkdir -p ${GOPATH}/src/code.google.com/p && \
+	mkdir -p ${GOPATH}/src/github.com/golang && \
 	mv /x/redigo-* ${GOPATH}/src/github.com/garyburd/redigo && \
-	mv /x/snappy-go-* ${GOPATH}/src/code.google.com/p/snappy-go && \
+	mv /x/snappy-* ${GOPATH}/src/github.com/golang/snappy && \
 	rm -rf /x
 
 # Create a shim runner to leverage environment variables

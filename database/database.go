@@ -163,7 +163,7 @@ var putScript = redis.NewScript(0, `
     for term, x in pairs(update) do
         if x == 1 then
             redis.call('SREM', 'index:' .. term, id)
-        elseif x == 2 then 
+        elseif x == 2 then
             redis.call('SADD', 'index:' .. term, id)
         end
     end
@@ -367,13 +367,13 @@ var getDocScript = redis.NewScript(0, `
     end
 
     local nextCrawl = redis.call('HGET', 'pkg:' .. id, 'crawl')
-    if not nextCrawl then 
+    if not nextCrawl then
         nextCrawl = redis.call('ZSCORE', 'nextCrawl', id)
         if not nextCrawl then
             nextCrawl = 0
         end
     end
-    
+
     return {gob, nextCrawl}
 `)
 
