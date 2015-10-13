@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/gddo/doc"
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/doc"
+	"github.com/shopkeep/gddo/gosrc"
 )
 
 var testdataPat = regexp.MustCompile(`/testdata(?:/|$)`)

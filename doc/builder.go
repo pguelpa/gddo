@@ -22,7 +22,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/gosrc"
 )
 
 func startsWithUppercase(s string) bool {
