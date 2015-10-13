@@ -1,12 +1,19 @@
-service:
+service: &default
   build: .
   environment:
+    CONTAINERIZED: true
     REDIS_URL: redis://data:6379
     GITHUB_TOKEN:
   ports:
     - "8080"
   links:
     - data
+
+test:
+  <<: *default
+  command: make test
+  volumes:
+    - "test-results/:/gopath/src/github.com/shopkeep/gddo/test-results"
 
 data:
   image: redis:2.8

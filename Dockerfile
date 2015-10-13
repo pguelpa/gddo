@@ -9,7 +9,9 @@ COPY script/gddo /usr/local/bin/
 
 # Build the local gddo files.
 COPY . ${GOPATH}/src/github.com/shopkeep/gddo
-RUN go install github.com/shopkeep/gddo/gddo-server
+WORKDIR ${GOPATH}/src/github.com/shopkeep/gddo
+
+RUN touch Makefile
 
 # How to start it all.
 CMD ["gddo"]
