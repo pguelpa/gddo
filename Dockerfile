@@ -12,6 +12,7 @@ COPY . ${GOPATH}/src/github.com/shopkeep/gddo
 WORKDIR ${GOPATH}/src/github.com/shopkeep/gddo
 
 RUN touch Makefile
+RUN make install
 
 # How to start it all.
 CMD ["gddo"]

@@ -44,7 +44,7 @@ build: install.godep ## Build the binary from source
 	godep go build $(LDFLAGS) -o $(TARGET)
 
 install: install.godep ## Install the binary
-	godep go install $(LDFLAGS)
+	godep go install $(LDFLAGS) ./...
 
 clean: ## Clean the binary and tests
 	-rm -f $(TARGET)
