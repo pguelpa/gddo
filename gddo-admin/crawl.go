@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/garyburd/redigo/redis"
-	"github.com/golang/gddo/database"
+	"github.com/shopkeep/gddo/database"
 )
 
 var crawlCommand = &command{

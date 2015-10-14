@@ -8,7 +8,7 @@ package main
 
 import (
 	"flag"
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/gosrc"
 	"log"
 	"time"
 )

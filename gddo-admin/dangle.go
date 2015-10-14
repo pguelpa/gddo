@@ -11,8 +11,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/golang/gddo/database"
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/database"
+	"github.com/shopkeep/gddo/gosrc"
 )
 
 var dangleCommand = &command{

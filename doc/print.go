@@ -18,8 +18,8 @@ import (
 	"os"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/golang/gddo/doc"
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/doc"
+	"github.com/shopkeep/gddo/gosrc"
 )
 
 var (

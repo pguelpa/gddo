@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang/gddo/gosrc"
+	"github.com/shopkeep/gddo/gosrc"
 )
 
 // This list of deprecated exports is used to find code that has not been

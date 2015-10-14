@@ -9,7 +9,7 @@ package httputil_test
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"github.com/golang/gddo/httputil"
+	"github.com/shopkeep/gddo/httputil"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

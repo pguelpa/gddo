@@ -18,8 +18,8 @@ RUN tar xzvf /x/redigo.tar.gz -C /x && tar xzvf /x/snappy.tar.gz -C /x && \
 COPY script/gddo /usr/local/bin/
 
 # Build the local gddo files.
-COPY . ${GOPATH}/src/github.com/golang/gddo
-RUN go install github.com/golang/gddo/gddo-server
+COPY . ${GOPATH}/src/github.com/shopkeep/gddo
+RUN go install github.com/shopkeep/gddo/gddo-server
 
 # How to start it all.
 CMD ["gddo"]
