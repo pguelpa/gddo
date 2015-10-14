@@ -8,8 +8,10 @@ package database
 
 import (
 	"math"
+	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -17,9 +19,17 @@ import (
 	"github.com/shopkeep/gddo/doc"
 )
 
+func parseRedisAddr() string {
+	host := os.Getenv("REDIS_URL")
+	if host == "" {
+		return ":6379"
+	}
+	return strings.Split(host, "redis://")[1]
+}
+
 func newDB(t *testing.T) *Database {
 	p := redis.NewPool(func() (redis.Conn, error) {
-		c, err := redis.DialTimeout("tcp", ":6379", 0, 1*time.Second, 1*time.Second)
+		c, err := redis.DialTimeout("tcp", parseRedisAddr(), 0, 1*time.Second, 1*time.Second)
 		if err != nil {
 			return nil, err
 		}

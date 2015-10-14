@@ -1,0 +1,21 @@
+{
+	"ImportPath": "github.com/shopkeep/gddo",
+	"GoVersion": "go1.5.1",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/garyburd/redigo/internal",
+			"Rev": "764a32c188f6ce0bc2565349f0125b3ad4021ea9"
+		},
+		{
+			"ImportPath": "github.com/garyburd/redigo/redis",
+			"Rev": "764a32c188f6ce0bc2565349f0125b3ad4021ea9"
+		},
+		{
+			"ImportPath": "github.com/golang/snappy",
+			"Rev": "723cc1e459b8eea2dea4583200fd60757d40097a"
+		}
+	]
+}
