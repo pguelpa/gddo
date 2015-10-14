@@ -1,0 +1,50 @@
+{
+  "id": "${CS_MARATHON_APP_ID}",
+  "cmd": null,
+  "cpus": 0.2,
+  "mem": 128,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "${CS_DOCKER_REGISTRY}/${CS_DOCKER_IMAGE_NAME}:${CS_GIT_BRANCH}-${CS_GIT_SHA}${CS_DIRTY_TAG}",
+      "forcePullImage": true,
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 0,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  },
+  "healthChecks": [
+    {
+      "path": "/",
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "constraints": [
+    [
+      "hostname",
+      "UNIQUE"
+    ],
+    [
+      "subnet", "LIKE", "internal"
+    ]
+  ],
+  "upgradeStrategy": {
+      "minimumHealthCapacity": 0.7,
+      "maximumOverCapacity": 0.8
+  },
+  "labels": {
+    "HAPROXY_MODE": "http",
+    "DOMAIN": "${CS_DEPLOY_DOMAIN}"
+  }
+}
