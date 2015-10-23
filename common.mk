@@ -154,4 +154,4 @@ deploy: check-env ## Deploy built container to marathon
 		CS_DEPLOY_DOMAIN=platform.$(CS_DEPLOY_ENV).posrip.com \
 		perl -pe 's;(\\*)(\$$([a-zA-Z_][a-zA-Z_0-9]*)|\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\})?;substr($$1,0,int(length($$1)/2)).($$2&&length($$1)%2?$$2:$$ENV{$$3||$$4});eg' deploy.json.tmpl > deploy.json \
 	)
-	curl -f -k -XPUT -H "Content-Type: application/json" "$(CS_MARATHON_JSON_API)$(CS_MARATHON_APP_ID)-$(CS_DEPLOY_ENV)" -d@"deploy.json"
+	curl -f -k -XPUT -H "Content-Type: application/json" "$(CS_MARATHON_JSON_API)/v2/apps/$(CS_MARATHON_APP_ID)-$(CS_DEPLOY_ENV)" -d@"deploy.json"
