@@ -108,13 +108,13 @@ staging: ## Sets up the environment for a staging build/deploy
 	@echo Configuring staging build/deploy
 	$(eval CS_DEPLOY_ENV = staging)
 	$(eval CS_DOCKER_REGISTRY = $(CS_DOCKER_REGISTRY_STAGING))
-	$(eval CS_MARATHON_JSON_API = $(CS_MARATHON_JSON_API_STAGING))
+	$(eval SHPKPR_MARATHON_URL = $(CS_MARATHON_JSON_API_STAGING))
 
 production: ## Sets up the environment for a production build/deploy
 	@echo Configuring production build/deploy
 	$(eval CS_DEPLOY_ENV = production)
 	$(eval CS_DOCKER_REGISTRY = $(CS_DOCKER_REGISTRY_PRODUCTION))
-	$(eval CS_MARATHON_JSON_API = $(CS_MARATHON_JSON_API_PRODUCTION))
+	$(eval SHPKPR_MARATHON_URL = $(CS_MARATHON_JSON_API_PRODUCTION))
 
 check-env:
 	@if [ "$(CS_DEPLOY_ENV)" == "" ]; then echo "Deploy environment not specified. You should call make staging <target> or make production <target>"; exit 1; fi
@@ -144,14 +144,11 @@ artifact.push: artifact.tag ## Push a docker image for the current git revision 
 
 deploy: check-env ## Deploy built container to marathon
 	@$(shell \
-		CS_DOCKER_REGISTRY=$(CS_DOCKER_REGISTRY) \
-		CS_MARATHON_APP_ID=$(CS_MARATHON_APP_ID) \
-		CS_DEPLOY_ENV=$(CS_DEPLOY_ENV) \
-		CS_DOCKER_IMAGE_NAME=$(CS_DOCKER_IMAGE_NAME) \
-		CS_GIT_BRANCH=$(CS_GIT_BRANCH) \
-		CS_GIT_SHA=$(CS_GIT_SHA) \
-		CS_DIRTY_TAG=$(CS_DIRTY_TAG) \
-		CS_DEPLOY_DOMAIN=platform.$(CS_DEPLOY_ENV).posrip.com \
-		perl -pe 's;(\\*)(\$$([a-zA-Z_][a-zA-Z_0-9]*)|\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\})?;substr($$1,0,int(length($$1)/2)).($$2&&length($$1)%2?$$2:$$ENV{$$3||$$4});eg' deploy.json.tmpl > deploy.json \
+		SHPKPR_DEPLOY_ENV=$(CS_DEPLOY_ENV) \
+		SHPKPR_MARATHON_URL=$(SHPKPR_MARATHON_URL) \
+		SHPKPR_DEPLOY_DOMAIN=platform.$(CS_DEPLOY_ENV).posrip.com \
+		SHPKPR_APPLICATION=$(CS_MARATHON_APP_ID) \
+		SHPKPR_DOCKER_REPOTAG=$(CS_DOCKER_REGISTRY)/$(CS_DOCKER_IMAGE_NAME):$(CS_GIT_BRANCH)-$(CS_GIT_SHA)$(CS_DIRTY_TAG) \
+		env > .env \
 	)
-	curl -f -k -XPUT -H "Content-Type: application/json" "$(CS_MARATHON_JSON_API)/v2/apps/$(CS_MARATHON_APP_ID)-$(CS_DEPLOY_ENV)" -d@"deploy.json"
+	docker run -i --env-file=.env -v "`pwd`":/usr/deploy shopkeep/shpkpr:v0.1.0a2 shpkpr deploy -t /usr/deploy/deploy.json.tmpl
