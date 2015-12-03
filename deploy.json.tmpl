@@ -1,8 +1,8 @@
 {
-  "cmd": null,
-  "cpus": 0.2,
-  "mem": 128,
-  "instances": 1,
+  "id": "{{SHPKPR_APPLICATION}}",
+  "cpus": {{CS_MARATHON_CPUS|require_float}},
+  "mem": {{CS_MARATHON_MEM|require_int}},
+  "instances": {{CS_MARATHON_INSTANCES|require_int}},
   "container": {
     "type": "DOCKER",
     "docker": {
