@@ -1,14 +1,13 @@
 {
-  "id": "${CS_MARATHON_APP_ID}",
-  "cmd": null,
-  "cpus": 0.2,
-  "mem": 128,
-  "instances": 1,
+  "id": "{{SHPKPR_APPLICATION}}",
+  "cpus": {{CS_MARATHON_CPUS|require_float}},
+  "mem": {{CS_MARATHON_MEM|require_int}},
+  "instances": {{CS_MARATHON_INSTANCES|require_int}},
   "container": {
     "type": "DOCKER",
     "docker": {
-      "image": "${CS_DOCKER_REGISTRY}/${CS_DOCKER_IMAGE_NAME}:${CS_GIT_BRANCH}-${CS_GIT_SHA}${CS_DIRTY_TAG}",
-      "forcePullImage": true,
+      "image": "{{DOCKER_REPOTAG}}",
+      "forcePullImage": false,
       "network": "BRIDGE",
       "portMappings": [
         {
@@ -20,8 +19,8 @@
     }
   },
   "env": {
-    "GITHUB_TOKEN": "${GITHUB_TOKEN}",
-    "REDIS_URL": "${REDIS_URL}"
+    "GITHUB_TOKEN": "{{GITHUB_TOKEN}}",
+    "REDIS_URL": "{{REDIS_URL}}"
   },
   "healthChecks": [
     {
@@ -29,26 +28,21 @@
       "protocol": "HTTP",
       "portIndex": 0,
       "gracePeriodSeconds": 300,
-      "intervalSeconds": 60,
-      "timeoutSeconds": 20,
+      "intervalSeconds": 20,
+      "timeoutSeconds": 10,
       "maxConsecutiveFailures": 3
     }
   ],
   "constraints": [
-    [
-      "hostname",
-      "UNIQUE"
-    ],
-    [
-      "subnet", "LIKE", "internal"
-    ]
+    ["hostname", "UNIQUE"],
+    ["subnet", "LIKE", "internal"]
   ],
   "upgradeStrategy": {
-      "minimumHealthCapacity": 0.7,
-      "maximumOverCapacity": 0.8
+      "minimumHealthCapacity": 1,
+      "maximumOverCapacity": 1
   },
   "labels": {
     "HAPROXY_MODE": "http",
-    "DOMAIN": "${CS_DEPLOY_DOMAIN}"
+    "DOMAIN": "{{DEPLOY_DOMAIN}}"
   }
 }

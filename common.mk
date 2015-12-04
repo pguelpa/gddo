@@ -144,14 +144,10 @@ artifact.push: artifact.tag ## Push a docker image for the current git revision 
 
 deploy: check-env ## Deploy built container to marathon
 	@$(shell \
-		CS_DOCKER_REGISTRY=$(CS_DOCKER_REGISTRY) \
-		CS_MARATHON_APP_ID=$(CS_MARATHON_APP_ID) \
-		CS_DEPLOY_ENV=$(CS_DEPLOY_ENV) \
-		CS_DOCKER_IMAGE_NAME=$(CS_DOCKER_IMAGE_NAME) \
-		CS_GIT_BRANCH=$(CS_GIT_BRANCH) \
-		CS_GIT_SHA=$(CS_GIT_SHA) \
-		CS_DIRTY_TAG=$(CS_DIRTY_TAG) \
-		CS_DEPLOY_DOMAIN=platform.$(CS_DEPLOY_ENV).posrip.com \
-		perl -pe 's;(\\*)(\$$([a-zA-Z_][a-zA-Z_0-9]*)|\$$\{([a-zA-Z_][a-zA-Z_0-9]*)\})?;substr($$1,0,int(length($$1)/2)).($$2&&length($$1)%2?$$2:$$ENV{$$3||$$4});eg' deploy.json.tmpl > deploy.json \
+		SHPKPR_APPLICATION=$(CS_MARATHON_APP_ID) \
+		SHPKPR_MARATHON_URL=$(CS_MARATHON_JSON_API) \
+		DEPLOY_DOMAIN=platform.$(CS_DEPLOY_ENV).posrip.com \
+		DOCKER_REPOTAG=$(CS_DOCKER_REGISTRY)/$(CS_DOCKER_IMAGE_NAME):$(CS_GIT_BRANCH)-$(CS_GIT_SHA)$(CS_DIRTY_TAG) \
+		env > .env \
 	)
-	curl -f -k -XPUT -H "Content-Type: application/json" "$(CS_MARATHON_JSON_API)/v2/apps/$(CS_MARATHON_APP_ID)-$(CS_DEPLOY_ENV)" -d@"deploy.json"
+	docker run -i --env-file=.env -v "`pwd`":/usr/deploy shopkeep/shpkpr:v0.1.0a7 shpkpr deploy -t /usr/deploy/deploy.json.tmpl -e ""
